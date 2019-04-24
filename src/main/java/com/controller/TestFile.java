@@ -32,13 +32,13 @@ public class TestFile {
 	
 	@GetMapping(value = "/healthcheck")
 	@ResponseBody
-	public Result healthCheck() {
-		return new GetResult("Success", ResultCode.SUCCESS);
+	public Result<String> healthCheck() {
+		return new GetResult<>("Success", ResultCode.SUCCESS);
 	}
 	
 	@PostMapping("/uploadFile")
 	@ResponseBody
-	public Result readFile(@RequestParam("file") MultipartFile file) throws IOException {
+	public Result<List<Entity>> readFile(@RequestParam("file") MultipartFile file) throws IOException {
 		File excel = new File("temp");
 	    FileOutputStream o = new FileOutputStream(excel);
 	    IOUtils.copy(file.getInputStream(), o);
@@ -47,6 +47,14 @@ public class TestFile {
 	    List<Entity> entities = excelService.getListOfEntities(excel);
 	    Result<List<Entity>> result = new Result<List<Entity>>("Success", ResultCode.SUCCESS);
 	    result.setData(entities);
+		return result;
+	}
+	
+	@PostMapping("/api/uploadFile")
+	@ResponseBody
+	public Result<String> uploadFile(@RequestParam("file") MultipartFile file) {	    
+		String response = excelService.uploadFileToS3(file);
+		Result<String> result = new Result<>(response, ResultCode.SUCCESS);
 		return result;
 	}
 }
