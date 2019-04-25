@@ -2,8 +2,6 @@ package com.service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +11,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -52,21 +49,13 @@ public class ExcelService {
 		return entities;
 	}
 
-	public String uploadFileToS3(MultipartFile multipartFile) {
-		String fileName = multipartFile.getOriginalFilename();
+	public String uploadFileToS3(File file) {
 		try {
-			// creating the file in the server (temporarily)
-			File file = new File(fileName);
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.write(multipartFile.getBytes());
-			fos.close();
-
-			PutObjectRequest putObjectRequest = new PutObjectRequest(awsUtil.bucketName + "/" + "ExcelFiles", fileName, file);
+			PutObjectRequest putObjectRequest = new PutObjectRequest(awsUtil.bucketName + "/" + "ExcelFiles", file.getName(), file);
 
 			awsUtil.getS3Client().putObject(putObjectRequest);
-			// removing the file created in the server
-			file.delete();
-		} catch (IOException | AmazonServiceException ex) {
+			
+		} catch (AmazonServiceException ex) {
 			throw new ResultException("Failed to upload file", ResultCode.ERROR);
 		}
 		return "Successfully uploaded";

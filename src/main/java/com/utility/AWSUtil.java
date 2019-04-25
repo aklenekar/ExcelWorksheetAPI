@@ -13,16 +13,16 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Component
-@PropertySource("classpath:application.properties")
+//@PropertySource("classpath:application.properties")
 public class AWSUtil {
 
-	@Value("${aws.accessKey}")
+	//@Value("${aws.accessKey}")
 	private String accessKey;
 	
-	@Value("${aws.secretKey}")
+	//@Value("${aws.secretKey}")
 	private String secretKey;
 	
-	@Value("${aws.bucketName}")
+	//@Value("${aws.bucketName}")
 	public String bucketName;
 	
 	public AmazonS3 getS3Client() {
